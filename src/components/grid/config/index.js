@@ -27,7 +27,7 @@ const baseGridsConfig = () => {
         })
     });
     return {
-        title: '伟立看板设计器', // 标题
+        title: 'YooMi看板设计器', // 标题
         tCurrent: 4, // 当前布局
         currentBorderType: 'borderBox13', // 当前边框
         list: o, // grid数据集
