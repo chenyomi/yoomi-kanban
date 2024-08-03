@@ -19,12 +19,12 @@ onMounted(() => {
   getData()
 })
 const getData = () => {
-  gridList.list[gridList.tCurrent].grid.forEach((e, i) => {
+  gridList.list[gridList.tCurrent].grid.forEach(async (e, i) => {
     if (gridList.options?.[i]?.module && document.getElementById('id' + i)) {
       const myChart = echarts.init(document.getElementById('id' + i), 'dark');
-      import(/* @vite-ignore */ `../../components/grid/js/${gridList.options[i].module}.js`).then(res => {
-        res.default && myChart.setOption(res.default());
-      })
+      const moduleName = gridList.options[i].module
+      const res = await import(`../../components/grid/js/${moduleName}.js`);
+      res.default && myChart.setOption(res.default());
     }
   })
 }

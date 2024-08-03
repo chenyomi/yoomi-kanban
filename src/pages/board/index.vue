@@ -36,7 +36,7 @@ onMounted(() => {
 })
 
 const getData = (id) => {
-  gridList.list[gridList.tCurrent].grid.forEach((e, i) => {
+  gridList.list[gridList.tCurrent].grid.forEach(async (e, i) => {
     if (gridList.options?.[i]?.module && document.getElementById('id' + i)) {
       // 当前拖拽id 只更新一个 或者 没有id 全部更新
       if ((id && id == ('id' + i)) || !id) {
@@ -47,12 +47,12 @@ const getData = (id) => {
           myChart.setOption(gridList.options[i].option);
           reloadView([1])
         } else {
-          import(/* @vite-ignore */ `../../components/grid/js/${gridList.options[i].module}.js`).then(res => {
-            myChart.clear()
-            res.default && myChart.setOption(res.default());
-            gridList.options[i].option = res.default() // 设置图表数据
-            reloadView([1])
-          })
+          const moduleName = gridList.options[i].module
+          const res = await import(`../../components/grid/js/${moduleName}.js`);
+          myChart.clear()
+          res.default && myChart.setOption(res.default());
+          gridList.options[i].option = res.default() // 设置图表数据
+          reloadView([1])
         }
 
       }

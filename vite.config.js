@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [vue(), monacoEditorPlugin.default({
     // 你可以在这里配置monaco-editor的选项
   })],
+  base: './',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
