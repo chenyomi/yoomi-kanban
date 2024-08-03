@@ -1,0 +1,1 @@
+const a=e=>({title:{text:"圆角环形图"},tooltip:{trigger:"item"},legend:{bottom:0,left:"center"},series:[{name:"Access From",type:"pie",radius:["40%","60%"],bottom:20,avoidLabelOverlap:!1,data:[{value:1048,name:"Search Engine"},{value:735,name:"Direct"},{value:580,name:"Email"},{value:484,name:"Union Ads"},{value:300,name:"Video Ads"}]}]});export{a as default};
