@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import monacoEditorPlugin from 'vite-plugin-monaco-editor';
 import path from "path";
 export default defineConfig({
+  base: './',
   plugins: [vue(), monacoEditorPlugin.default({
     // 你可以在这里配置monaco-editor的选项
   })],
