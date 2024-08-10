@@ -16,5 +16,8 @@ export default defineConfig({
     hmr: true,
     open: true,
     host: '0.0.0.0'
+  },
+  build: {
+    outDir: 'docs',//想要把dist修改成什么名字在这边改
   }
 })
