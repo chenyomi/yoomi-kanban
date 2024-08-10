@@ -1,6 +1,21 @@
 
+export const data = {
+    value: [120, 200, 150, 80, 70, 110, 130],
+    type: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+}
+export const setData = (a, b) => {
+    let arr = []
+    a.xAxis.data = b.type
+    b.value.forEach((e, i) => {
+        arr.push({
+            value: e,
+        })
+    })
+    a.series[0].data = arr
+    return a
+}
 export default () => {
-    return {
+    return setData({
         title: {
             text: '基础平滑折线图'
         },
@@ -9,17 +24,17 @@ export default () => {
         },
         xAxis: {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            data: []
         },
         yAxis: {
             type: 'value'
         },
         series: [
             {
-                data: [820, 932, 901, 934, 1290, 1330, 1320],
+                data: [],
                 type: 'line',
                 smooth: true
             }
         ]
-    }
+    }, data)
 };

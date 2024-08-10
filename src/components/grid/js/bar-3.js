@@ -1,83 +1,117 @@
 import theme from '@/assets/js/chart-theme.json'
-export default (c) => {
-    var data = [];
-    var dataCount = 10;
-    var startTime = +new Date();
-    var categories = ['设备A', '设备B', '设备C'];
-    var types = [
-        { name: 'JS Heap' },
-        { name: 'Documents' },
-        { name: 'Nodes' },
-        { name: 'Listeners' },
-        { name: 'GPU Memory' },
-        { name: 'GPU' }
-    ];
-    types.forEach((e, i) => {
-        e.color = theme.color[i]
-    })
-    categories.forEach(function (category, index) {
-        var baseTime = startTime;
-        var duration = 3600000
-        for (var i = 0; i < dataCount; i++) {
-            var typeItem = types[Math.round(Math.random() * (types.length - 1))];  // 随机类型
-            data.push({
-                name: typeItem.name,
-                value: [index, baseTime, (baseTime += duration)],
-                itemStyle: {
-                    normal: {
-                        color: typeItem.color
-                    }
-                }
-            });
-        }
-    });
-    function renderItem(params, api) {
-        var categoryIndex = api.value(0);
-        var start = api.coord([api.value(1), categoryIndex]);
-        var end = api.coord([api.value(2), categoryIndex]);
-        var height = api.size([0, 1])[1] * 0.6;
-        var rectShape = echarts.graphic.clipRectByRect(
-            {
-                x: start[0],
-                y: start[1] - height / 2,
-                width: end[0] - start[0],
-                height: height
-            },
-            {
-                x: params.coordSys.x,
-                y: params.coordSys.y,
-                width: params.coordSys.width,
-                height: params.coordSys.height
-            }
-        );
-        return (
-            rectShape && {
-                type: 'rect',
-                transition: ['shape'],
-                shape: rectShape,
-                style: api.style()
-            }
-        );
+const startTime = +new Date();
+export const data = {
+    min: startTime,
+    max: startTime + 43200000,
+    categories: ['设备A', '设备B', '设备C'],
+    type: ['状态1', '状态2', '状态3', '状态4'],
+    value: [],
+}
+
+data.categories.forEach(function (category, index) {
+    var baseTime = startTime;
+    var duration = 3600000
+    for (var i = 0; i < 10; i++) {
+        var typeItem = data.type[Math.round(Math.random() * (data.type.length - 1))];  // 随机类型
+        data.value.push({
+            categorie: category,
+            type: typeItem,
+            begin: baseTime,
+            end: baseTime += duration
+        });
     }
-    return {
-        tooltip: {
-            formatter: function (params) {
-                const options = { timeStyle: "medium", dateStyle: "medium" };
-                const formatter = new Intl.DateTimeFormat('zn-cn', options);
-                const time1 = formatter.format(params.value[2]);
-                const time2 = formatter.format(params.value[3]);
-                return params.marker + params.name + ': ' + time1 + '~' + time2;
-            }
+});
+const renderItem = (params, api) => {
+    var category = api.value(0);
+    var start = api.coord([api.value(2), category]);
+    var end = api.coord([api.value(3), category]);
+    var height = api.size([0, 1])[1] * 0.6;
+    var rectShape = echarts.graphic.clipRectByRect(
+        {
+            x: start[0],
+            y: start[1] - height / 2,
+            width: end[0] - start[0],
+            height: height
         },
+        {
+            x: params.coordSys.x,
+            y: params.coordSys.y,
+            width: params.coordSys.width,
+            height: params.coordSys.height
+        }
+    );
+    return (
+        rectShape && {
+            type: 'rect',
+            transition: ['shape'],
+            shape: rectShape,
+            style: api.style()
+        }
+    );
+}
+const tooltipformatter = (params) => {
+    const options = { timeStyle: "medium", dateStyle: "medium" };
+    const formatter = new Intl.DateTimeFormat('zn-cn', options);
+    const time1 = formatter.format(params.value[2]);
+    const time2 = formatter.format(params.value[3]);
+    return params.marker + params.value[1] + ': ' + time1 + '~' + time2;
+}
+const axisLabelformatter = (val) => {
+    const options = { hour: '2-digit', minute: '2-digit' };
+    const formatter = new Intl.DateTimeFormat('zh-cn', options);
+    const time = formatter.format(val);
+    return time;
+}
+export const setData = (a, b) => {
+    const arr = []
+    b.value.forEach(e => {
+        const v = [e.categorie, e.type, e.begin, e.end]
+        const item = b.type.findIndex(c => c == v[1])
+        arr.push({
+            value: v,
+            name: v[0],
+            itemStyle: {
+                normal: {
+                    color: theme.color[item]
+                }
+            }
+        })
+    })
+    a.xAxis.min = b.min
+    a.xAxis.max = b.max
+    a.legend.data = b.type
+    a.yAxis.data = b.categories
+    a.series.at(-1).data = arr
+    const typeArr = []
+    b.type.forEach(e => {
+        typeArr.push({
+            name: e,
+            legendOnly: true,
+            type: 'line',
+            data: []
+        })
+
+    })
+    a.tooltip.formatter = tooltipformatter
+    a.xAxis.axisLabel.formatter = axisLabelformatter
+    a.series.at(-1).renderItem = renderItem
+    a.series = [...typeArr, a.series.at(-1)]
+    return a
+}
+export default (c) => {
+    return setData({
+        tooltip: {},
         title: {
             text: '时序图',
         },
         legend: {
-            data: ['状态1', '状态2', '状态3', '状态4'] // 设置legend项
+            data: [] // 设置legend项
         },
         grid: {
             top: 40,
-            bottom: 70
+            bottom: 60,
+            left: 0,
+            right: 10
         },
         dataZoom: [
             {
@@ -98,54 +132,22 @@ export default (c) => {
             max: startTime + 43200000,
             scale: true,
             splitNumber: 6,
-            axisLabel: {
-                formatter: function (val) {
-                    const options = { hour: '2-digit', minute: '2-digit' };
-                    const formatter = new Intl.DateTimeFormat('zh-cn', options);
-                    const time = formatter.format(val);
-                    return time;
-                }
-            }
+            axisLabel: {}
         },
         yAxis: {
-            data: categories
+            data: []
         },
         series: [
             {
                 type: 'custom',
-                renderItem: renderItem,
                 encode: {
-                    x: [1, 2],
+                    x: [2, 3],
                     y: 0,
-                    legend: [0]
+                    legend: [1]
                 },
                 data: data
             },
-            // 额外的空数据系列用于legend
-            {
-                name: '状态1', // 虚的仅用于显示
-                legendOnly: true, // 表明这个系列仅用于legend，不影响实际绘图
-                type: 'line',
-                data: []
-            },
-            {
-                name: '状态2', // 虚的仅用于显示
-                legendOnly: true, // 表明这个系列仅用于legend，不影响实际绘图
-                type: 'line',
-                data: []
-            },
-            {
-                name: '状态3', // 虚的仅用于显示
-                legendOnly: true,
-                type: 'line',
-                data: []
-            },
-            {
-                name: '状态4', // 虚的仅用于显示
-                legendOnly: true,
-                type: 'line',
-                data: []
-            }
         ]
-    }
+
+    }, data)
 };

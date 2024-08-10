@@ -33,7 +33,7 @@
 .scroll-class::-webkit-scrollbar {
   position: fixed;
   height: 12px;
-  width: 3px;
+  width: 2px;
 }
 
 .scroll-class::-webkit-scrollbar-thumb {

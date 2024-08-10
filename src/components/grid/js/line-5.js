@@ -1,6 +1,46 @@
 
+
+export const data = {
+    type: ['type1', 'type2', 'type3', 'type4', 'type5', 'type6', 'type7'],
+    value: [
+        {
+            name: 'line1',
+            value: [120, 132, 101, 134, 90, 230, 210]
+        },
+        {
+            name: 'line2',
+            value: [220, 182, 191, 234, 290, 330, 310]
+        },
+        {
+            name: 'line3',
+            value: [150, 232, 201, 154, 190, 330, 410]
+        },
+
+    ],
+}
+export const setData = (a, b) => {
+    let arr = []
+    let type = []
+    b.value.forEach((e, i) => {
+        arr.push({
+            name: e.name,
+            type: 'line',
+            stack: 'Total',
+            areaStyle: {},
+            emphasis: {
+                focus: 'series'
+            },
+            data: e.value,
+        })
+        type.push(e.name)
+    })
+    a.series = arr
+    a.xAxis.data = data.type
+    a.legend.data = type
+    return a
+}
 export default () => {
-    return {
+    return setData({
         title: {
             text: '堆叠面积图'
         },
@@ -14,76 +54,16 @@ export default () => {
             }
         },
         legend: {
-
-            data: ['line1', 'line2', 'line3', 'line4', 'line5']
+            data: []
         },
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: 'line1',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {},
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [12, 13, 11, 13, 9, 23, 21]
-            },
-            {
-                name: 'line2',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {},
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [22, 18, 19, 23, 29, 33, 31]
-            },
-            {
-                name: 'line3',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {},
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [15, 23, 20, 15, 19, 33, 40]
-            },
-            {
-                name: 'line4',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {},
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [32, 33, 30, 33, 39, 22, 33]
-            },
-            {
-                name: 'line5',
-                type: 'line',
-                stack: 'Total',
-                label: {
-                    show: true,
-                    position: 'top'
-                },
-                areaStyle: {},
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [55, 40, 55, 33, 60, 66, 55]
-            }
-        ]
-    }
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: []
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: []
+    }, data)
 };

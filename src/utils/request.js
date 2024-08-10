@@ -18,29 +18,14 @@ service.interceptors.request.use(
 
 // 响应拦截器
 service.interceptors.response.use((response) => {
-
-    const { code, msg, data } = response.data
-    if (code == 200) {
-        getVersion(response)
-        return data
-    } else {
-        return Promise.reject(new Error(msg))
-    }
+    return response.data
+    // const { code, msg, data } = response.data
+    // if (code == 200) {
+    //     return data
+    // } else {
+    //     return Promise.reject(new Error(msg))
+    // }
 })
-const getVersion = (response) => {
-    const sVer = response.headers['kanban-version']
-    const ver = localStorage.getItem('kanban-version')
-    if (sVer) {
-        if (!ver) {
-            localStorage.setItem('kanban-version', sVer)
-        } else {
-            if (ver !== sVer) {
-                localStorage.setItem('kanban-version', sVer)
-                location.reload(true)
-            }
-        }
-    }
-}
 // 适配器, 用于适配不同的请求方式
 export const baseRequest = (url, value = {}, method = 'post', options = {}) => {
     if (method === 'post') {
@@ -63,6 +48,16 @@ export const baseRequest = (url, value = {}, method = 'post', options = {}) => {
             data: value,
             ...options
         })
+    }
+}
+
+
+// 适配器, 用于适配不同的请求方式
+export const autoRequest = (url, value = {}, method = 'get', options = {}) => {
+    if (method === 'post') {
+        return service.post(url, value, options)
+    } else if (method === 'get') {
+        return service.get(url, { params: value, ...options })
     }
 }
 

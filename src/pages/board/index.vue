@@ -1,6 +1,9 @@
 <template>
   <div class="grid h-full grid-flow-col grid-rows-6 gap-2">
-    <div v-for="(item, i) in gridList.list[gridList.tCurrent].grid" :class="item.class">
+    <div v-for="(item, i) in gridList.list[gridList.tCurrent].grid" :class="item.class"
+      :style="activeKey[0] == i && 'border: 2px dashed #5bd1d7'" @click="() => {
+        activeKey[0] = i
+      }">
       <component :is="item.borderType" :colorType="item.colorType">
         <span class="absolute top-0 z-10 px-3 text-9xl right-6 opacity-5" style="color: #ffffff;">{{ i + 1
           }}</span>
@@ -15,7 +18,8 @@
 </template>
 <script setup name="produceboard">
 import { ref, onMounted, onUnmounted, defineExpose, inject, watch } from 'vue'
-
+import chartJson from '@/assets/js/chart-theme.json'
+const activeKey = inject('activeKey')
 const gridList = inject('gridList')
 
 const reloadView = inject('reloadView')
@@ -26,7 +30,7 @@ const setNewData = (e) => {
     gridList.list[gridList.tCurrent].grid.forEach(e => {
       e.borderType = gridList.currentBorderType
     })
-    reloadView([0, 1, 2])
+    reloadView([0, 1])
   }
 }
 
@@ -34,6 +38,7 @@ const setNewData = (e) => {
 onMounted(() => {
   getData()
 })
+import { autoRequest } from '@/utils/request'
 
 const getData = (id) => {
   gridList.list[gridList.tCurrent].grid.forEach(async (e, i) => {
@@ -41,20 +46,33 @@ const getData = (id) => {
       // 当前拖拽id 只更新一个 或者 没有id 全部更新
       if ((id && id == ('id' + i)) || !id) {
         const myChart = echarts.init(document.getElementById('id' + i), 'dark');
-        // 导入当前拖拽图表默认数据
+        // 获取当前拖拽图表静态默认数据以及规则方法
+        const moduleName = gridList.options[i].module
+        const res = await import(`../../components/grid/js/${moduleName}.js`);
+        // 清除一下图表
+        myChart.clear()
         if (gridList.options[i].option) {
-          myChart.clear()
-          myChart.setOption(gridList.options[i].option);
-          reloadView([1])
+          if (gridList.api[i]) {
+            // 渲染设置了api数据源的图表
+            autoRequest(gridList.api[i], {}, 'get').then(e => {
+              const option = res.setData(gridList.options[i].option, e)
+              myChart.setOption(option);
+              gridList.options[i].option = option
+            })
+          } else {
+            // 切换布局或边框 图表重新渲染
+            myChart.setOption(gridList.options[i].option);
+          }
         } else {
-          const moduleName = gridList.options[i].module
-          const res = await import(`../../components/grid/js/${moduleName}.js`);
-          myChart.clear()
-          res.default && myChart.setOption(res.default());
-          gridList.options[i].option = res.default() // 设置图表数据
-          reloadView([1])
+          // 第一次拖拽图表进去
+          gridList.api[i] && delete gridList.api[i]
+          const baseOp = Object.assign({ grid: chartJson.grid }, res.default())
+          res.default && myChart.setOption(baseOp);
+          gridList.options[i].option = baseOp // 设置图表数据
         }
-
+        window.addEventListener('resize', () => {
+          myChart.resize()
+        })
       }
     }
   })

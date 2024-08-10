@@ -1,6 +1,21 @@
-import theme from '@/assets/js/chart-theme.json'
+
+const axisLabelformatter = (value) => {
+    if (value == 50 || value == 70 || value == 100) {
+        return value
+    } else {
+        return ''
+    }
+}
+export const data = {
+    value: 80,
+}
+export const setData = (a, b) => {
+    a.series[0].axisLabel.formatter = axisLabelformatter
+    a.series[0].data[0].value = b.value
+    return a
+}
 export default (c) => {
-    return {
+    return setData({
         title: {
             text: '仪表盘'
         },
@@ -37,13 +52,7 @@ export default (c) => {
                     color: 'inherit',
                     distance: 12,
                     fontSize: 10,
-                    formatter: function (value) {
-                        if (value == 50 || value == 70 || value == 100) {
-                            return value
-                        } else {
-                            return ''
-                        }
-                    }
+                    formatter: {}
                 },
                 detail: {
                     valueAnimation: true,
@@ -55,10 +64,10 @@ export default (c) => {
                 },
                 data: [
                     {
-                        value: 80
+                        value: 0
                     }
                 ]
             }
         ]
-    }
+    }, data)
 };

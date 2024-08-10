@@ -24,8 +24,7 @@
         </div>
         <div style="width: 300px;">
             <div class="flex flex-col h-full">
-                <!-- <rightCodeEdit v-if="show[1]" class="fadeIn" style="height: 50vh;"></rightCodeEdit> -->
-                <rightProps v-if="show[2]" class="fadeIn" style="height: 100vh;"></rightProps>
+                <rightProps v-if="show[1]" class="fadeIn" style="height: 100vh;"></rightProps>
             </div>
         </div>
     </div>
@@ -33,7 +32,6 @@
 <script setup name="produceboard">
 import { provide, ref, onMounted } from 'vue';
 import leftMenu from './leftMenu.vue';
-import rightCodeEdit from './rightCodeEdit.vue';
 import rightProps from './rightProps.vue';
 import chartTitle from './title'
 
@@ -43,6 +41,9 @@ provide('gridList', gridList)
 
 const lock = ref(false)
 provide('lock', lock)
+
+const activeKey = ref([]);
+provide('activeKey', activeKey)
 
 let startId = null
 let dom_ = null
@@ -130,7 +131,6 @@ provide('view', view)
 const show = ref({
     0: true,
     1: true,
-    2: true,
 })
 const reloadView = (arr) => {
     if (arr && arr.length) {

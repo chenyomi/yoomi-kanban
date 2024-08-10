@@ -13,18 +13,35 @@
 </template>
 <script setup name="produceboard">
 import { ref, onMounted, onUnmounted, defineExpose, inject, watch } from 'vue'
-const gridList = inject('gridList')
+import { autoRequest } from '@/utils/request'
 
+
+const gridList = inject('gridList')
 onMounted(() => {
   getData()
 })
+
+
 const getData = () => {
   gridList.list[gridList.tCurrent].grid.forEach(async (e, i) => {
     if (gridList.options?.[i]?.module && document.getElementById('id' + i)) {
       const myChart = echarts.init(document.getElementById('id' + i), 'dark');
       const moduleName = gridList.options[i].module
       const res = await import(`../../components/grid/js/${moduleName}.js`);
-      res.default && myChart.setOption(res.default());
+      if (gridList.api[i]) {
+        // 渲染设置了api数据源的图表
+        autoRequest(gridList.api[i], {}, 'get').then(e => {
+          const option = res.setData(gridList.options[i].option, e)
+          myChart.setOption(option);
+          gridList.options[i].option = option
+        })
+      } else {
+        // 图表默认渲染
+        myChart.setOption(gridList.options[i].option,);
+      }
+      window.addEventListener('resize', () => {
+        myChart.resize()
+      })
     }
   })
 }

@@ -1,6 +1,58 @@
-
+export const data = {
+    type: ['type1', 'type2', 'type3', 'type4', 'type5', 'type6', 'type7'],
+    value: [
+        {
+            name: 'line1',
+            value: [14, 23, 10, 26, 9, 34, 25]
+        },
+        {
+            name: 'line2',
+            value: [12, 28, 11, 23, 22, 34, 31]
+        },
+        {
+            name: 'line3',
+            value: [32, 13, 20, 33, 19, 13, 22]
+        },
+        {
+            name: 'line4',
+            value: [22, 40, 23, 13, 19, 23, 12]
+        },
+        {
+            name: 'line5',
+            value: [22, 30, 18, 23, 21, 29, 15]
+        },
+    ],
+}
+export const setData = (a, b) => {
+    let arr = []
+    let type = []
+    b.value.forEach((e, i) => {
+        arr.push({
+            name: e.name,
+            type: 'line',
+            stack: 'Total',
+            smooth: true,
+            lineStyle: {
+                width: 1
+            },
+            showSymbol: false,
+            areaStyle: {
+                opacity: .8,
+            },
+            emphasis: {
+                focus: 'series'
+            },
+            data: e.value,
+        })
+        type.push(e.name)
+    })
+    a.series = arr
+    a.xAxis.data = data.type
+    a.legend.data = type
+    return a
+}
 export default () => {
-    return {
+    return setData({
         title: {
             text: '渐变堆叠面积图'
         },
@@ -14,160 +66,16 @@ export default () => {
             }
         },
         legend: {
-            data: ['Line 1', 'Line 2', 'Line 3', 'Line 4', 'Line 5']
+            data: []
         },
-        xAxis: [
-            {
-                type: 'category',
-                boundaryGap: false,
-                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name: 'Line 1',
-                type: 'line',
-                stack: 'Total',
-                smooth: true,
-                lineStyle: {
-                    width: 0
-                },
-                showSymbol: false,
-                areaStyle: {
-                    opacity: 0.8,
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(128, 255, 165)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(1, 191, 236)'
-                        }
-                    ])
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [14, 23, 10, 26, 9, 34, 25]
-            },
-            {
-                name: 'Line 2',
-                type: 'line',
-                stack: 'Total',
-                smooth: true,
-                lineStyle: {
-                    width: 0
-                },
-                showSymbol: false,
-                areaStyle: {
-                    opacity: 0.8,
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(0, 221, 255)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(77, 119, 255)'
-                        }
-                    ])
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [12, 28, 11, 23, 22, 34, 31]
-            },
-            {
-                name: 'Line 3',
-                type: 'line',
-                stack: 'Total',
-                smooth: true,
-                lineStyle: {
-                    width: 0
-                },
-                showSymbol: false,
-                areaStyle: {
-                    opacity: 0.8,
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(55, 162, 255)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(116, 21, 219)'
-                        }
-                    ])
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [32, 13, 20, 33, 19, 13, 22]
-            },
-            {
-                name: 'Line 4',
-                type: 'line',
-                stack: 'Total',
-                smooth: true,
-                lineStyle: {
-                    width: 0
-                },
-                showSymbol: false,
-                areaStyle: {
-                    opacity: 0.8,
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(255, 0, 135)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(135, 0, 157)'
-                        }
-                    ])
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [22, 40, 23, 13, 19, 23, 12]
-            },
-            {
-                name: 'Line 5',
-                type: 'line',
-                stack: 'Total',
-                smooth: true,
-                lineStyle: {
-                    width: 0
-                },
-                showSymbol: false,
-                label: {
-                    show: true,
-                    position: 'top'
-                },
-                areaStyle: {
-                    opacity: 0.8,
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(255, 191, 0)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(224, 62, 76)'
-                        }
-                    ])
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                data: [22, 30, 18, 23, 21, 29, 15]
-            }
-        ]
-    }
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: []
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: []
+    }, data)
 };

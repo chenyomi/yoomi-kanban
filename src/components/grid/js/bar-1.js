@@ -1,9 +1,12 @@
 import theme from '@/assets/js/chart-theme.json'
-
-export default (c) => {
+export const data = {
+    value: [120, 200, 150, 80, 70, 110, 130],
+    type: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+}
+export const setData = (a, b) => {
     let arr = []
-    const base = [120, 200, 150, 80, 70, 110, 130]
-    base.forEach((e, i) => {
+    a.xAxis.data = b.type
+    b.value.forEach((e, i) => {
         arr.push({
             value: e,
             itemStyle: {
@@ -11,7 +14,11 @@ export default (c) => {
             }
         })
     })
-    return {
+    a.series[0].data = arr
+    return a
+}
+export default (c) => {
+    return setData({
         title: {
             text: '基础柱状图'
         },
@@ -20,16 +27,16 @@ export default (c) => {
         },
         xAxis: {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            data: []
         },
         yAxis: {
             type: 'value'
         },
         series: [
             {
-                data: arr,
+                data: [],
                 type: 'bar'
             }
         ]
-    }
+    }, data)
 };

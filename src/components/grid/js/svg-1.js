@@ -1,17 +1,15 @@
 import theme from '@/assets/js/chart-theme.json'
 import svg from '../svg/machine.svg?raw'
-import { data } from 'autoprefixer';
 export default (c) => {
     echarts.registerMap('machine', { svg: svg });
     return {
         tooltip: {},
-        legend: {
-            // 图例的数据数组
-            data: ['1号机床', '2号机床', '3号机床', '4号机床'],
-        },
+        // legend: {
+        //     // 图例的数据数组
+        //     data: ['1号机床', '2号机床', '3号机床', '4号机床'],
+        // },
         series: [
             {
-                name: 'machine',
                 type: 'map',
                 map: 'machine',
                 roam: true,

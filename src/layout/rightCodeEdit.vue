@@ -1,10 +1,13 @@
 <template>
-    <div class="flex flex-col h-full">
-        <div class="flex items-center justify-between p-3" style="color: #ffffff;">
-            <span>数据源</span>
-            <a-button @click="reload">运行</a-button>
+
+    <div class="flex flex-row">
+        <div class="flex-1 px-3 py-4">
+            <div id="editor" style="height: 400px; "></div>
         </div>
-        <div id="editor" class="flex-1" style="height: calc((100vh / 2) - 80px)"></div>
+        <div class="flex-1 p-3">
+            <a-input-search v-model:value="apiUrl" prefix="GET：" enter-button="运行" @search="requestFn" />
+            <div id="editor-api" class="mt-5" style="height: 300px; "></div>
+        </div>
     </div>
 </template>
 
@@ -12,27 +15,29 @@
 import { onMounted, ref, inject, toRaw } from 'vue';
 import * as monaco from 'monaco-editor';
 const gridList = inject('gridList')
-const editor = ref(null);
-
-const reloadView = inject('reloadView')
-
-const reload = () => {
-    const value = JSON.parse(toRaw(editor.value).getValue())
-    gridList.list[gridList.tCurrent].grid = value.grid
-    gridList.options = value.options
-    reloadView([0, 2])
+const apiUrl = ref('')
+const props = defineProps({
+    openIndex: {
+        type: Number
+    }
+})
+if (gridList.api[props.openIndex]) {
+    apiUrl.value = gridList.api[props.openIndex]
 }
-onMounted(() => {
-    editor.value = monaco.editor.create(document.getElementById('editor'), {
-        value: JSON.stringify({
-            ...gridList.list[gridList.tCurrent],
-            options: gridList.options
-        }),
+let editor1 = null
+let editor2 = null
+const init = () => {
+    editor1 = initEdit('editor')
+    editor2 = initEdit('editor-api')
+}
+const initEdit = (id) => {
+    const editor = monaco.editor.create(document.getElementById(id), {
+        value: '',
         language: 'json',
         readOnly: false,
         // 行号
         lineNumbers: false,
-        wordWrap: false, // 开启自动换行
+        wordWrap: true, // 开启自动换行
         fontSize: 14,
         lineHeight: 15,
         minimap: { enabled: false },
@@ -58,19 +63,41 @@ onMounted(() => {
         folding: true,
         theme: 'vs-dark' // 设置为暗色主题
     });
-    // editor.value.addCommand(monaco.KeyMod.CtrlCmd || monaco.KeyCode.KEY_S, function () {
-    //     console.log('Ctrl + S 保存')
-    // })
-    // 禁用键盘按键
-    // editor.value.onKeyDown((event) => {
-    //     event.stopPropagation();
-    //     event.preventDefault();
-    // });
-    //添加按键监听
-
-    // 自动格式化整个文档
+    return editor
+    // setTimeout(() => {
+    //     editor.setValue(val); // 
+    //     editor && editor.trigger('', 'editor.action.formatDocument');
+    // }, 100);
+}
+const getData = async () => {
+    const moduleName = gridList.options[props.openIndex].module
+    const { data } = await import(`../components/grid/js/${moduleName}.js`);
     setTimeout(() => {
-        editor.value && editor.value.trigger('', 'editor.action.formatDocument');
-    }, 400);
+        editor1.setValue('// 数据格式示例\n' + JSON.stringify(data))
+        editor1.trigger('', 'editor.action.formatDocument');
+    }, 100);
+}
+
+import { autoRequest } from '@/utils/request'
+const requestFn = () => {
+    apiUrl.value && autoRequest(apiUrl.value, {}, 'get').then(res => {
+        setTimeout(() => {
+            editor2.setValue(JSON.stringify(res))
+            editor2.trigger('', 'editor.action.formatDocument');
+        }, 100);
+    })
+}
+onMounted(() => {
+    init()
+    getData()
+    requestFn()
 });
+defineExpose({
+    apiUrl
+})
 </script>
+<style>
+.ant-input-prefix {
+    color: gold;
+}
+</style>

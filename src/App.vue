@@ -1,13 +1,5 @@
 <script setup>
 import { theme } from 'ant-design-vue';
-// resize 重载
-let resizeTimer;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(function () {
-    location.reload(true)
-  }, 250);
-})
 </script>
 
 <template>

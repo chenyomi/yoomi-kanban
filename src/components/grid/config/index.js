@@ -1,4 +1,3 @@
-
 const grids = {
     0: ['col-span-1 row-span-2', 'col-span-1 row-span-4', 'col-span-1 row-span-2', 'col-span-2 row-span-4', 'col-span-1 row-span-2'],
     1: ['col-span-1 row-span-2', 'col-span-2 row-span-4', 'col-span-1 row-span-2', 'col-span-1 row-span-2', 'col-span-1 row-span-4'],
@@ -31,7 +30,9 @@ const baseGridsConfig = () => {
         tCurrent: 4, // 当前布局
         currentBorderType: 'borderBox13', // 当前边框
         list: o, // grid数据集
-        options: {} // 图表数据option集合
+        options: {}, // 图表数据option集合
+        api: {}
+
     }
 }
 
